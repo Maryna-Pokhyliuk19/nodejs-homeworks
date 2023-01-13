@@ -1,15 +1,20 @@
+const { ValidationError } = require("../helpers/errors");
+
 const {
   addContactSchema,
-} = require("../helper/contactValidation/addContactValidationSchema");
+} = require("../helpers/contactValidation/addContactValidationSchema");
 const {
   UpdateContactSchema,
-} = require("../helper/contactValidation/updateContactValidationSchema");
+} = require("../helpers/contactValidation/updateContactValidationSchema");
+const {
+  updateContactFavoriteSchema,
+} = require("../helpers/contactValidation/updateContactFavoriteSchema");
 
 const validateAddContact = (req, res, next) => {
   const result = addContactSchema.validate(req.body);
 
   if (result.error) {
-    return res.status(400).json(result.error.details[0].message);
+    next(new ValidationError(JSON.stringify(result.error.details[0].message)));
   }
   next();
 };
@@ -17,7 +22,15 @@ const validateAddContact = (req, res, next) => {
 const validateUpdateContact = (req, res, next) => {
   const validationResult = UpdateContactSchema.validate(req.body);
   if (validationResult.error) {
-    return res.status(400).json(result.error.details[0].message);
+    next(new ValidationError(JSON.stringify(result.error.details[0].message)));
+  }
+  next();
+};
+
+const validateUpdateFavoriteContact = (req, res, next) => {
+  const validationResult = updateContactFavoriteSchema.validate(req.body);
+  if (validationResult.error) {
+    next(new ValidationError("missing field favorite"));
   }
   next();
 };
@@ -25,4 +38,5 @@ const validateUpdateContact = (req, res, next) => {
 module.exports = {
   validateAddContact,
   validateUpdateContact,
+  validateUpdateFavoriteContact,
 };

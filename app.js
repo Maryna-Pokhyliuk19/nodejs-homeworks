@@ -3,7 +3,7 @@ const logger = require("morgan");
 const cors = require("cors");
 
 const contactsRouter = require("./routes/api/contactsRoute");
-
+const { errorHandler } = require("./helpers/apiHelpers");
 const app = express();
 
 const formatsLogger = app.get("env") === "development" ? "dev" : "short";
@@ -21,5 +21,7 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
   res.status(500).json({ message: err.message });
 });
+
+app.use(errorHandler);
 
 module.exports = app;
