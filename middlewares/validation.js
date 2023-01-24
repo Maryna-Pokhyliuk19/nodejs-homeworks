@@ -9,6 +9,10 @@ const {
 const {
   updateContactFavoriteSchema,
 } = require("../helpers/contactValidation/updateContactFavoriteSchema");
+const {
+  registrationSchema,
+} = require("../helpers/authValidation/registrationSchema");
+const { loginSchema } = require("../helpers/authValidation/loginSchema");
 
 const validateAddContact = (req, res, next) => {
   const result = addContactSchema.validate(req.body);
@@ -35,8 +39,26 @@ const validateUpdateFavoriteContact = (req, res, next) => {
   next();
 };
 
+const validateRegistration = (req, res, next) => {
+  const validationResult = registrationSchema.validate(req.body);
+  if (validationResult.error) {
+    next(new ValidationError(JSON.stringify(result.error.details[0].message)));
+  }
+  next();
+};
+
+const validateLogin = (req, res, next) => {
+  const validationResult = loginSchema.validate(req.body);
+  if (validationResult.error) {
+    next(new ValidationError(JSON.stringify(result.error.details[0].message)));
+  }
+  next();
+};
+
 module.exports = {
   validateAddContact,
   validateUpdateContact,
   validateUpdateFavoriteContact,
+  validateRegistration,
+  validateLogin,
 };

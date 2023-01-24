@@ -5,6 +5,7 @@ const {
   validateUpdateContact,
   validateUpdateFavoriteContact,
 } = require("../../middlewares/validation");
+const { authMiddleware } = require("../../middlewares/authMiddleware");
 const {
   getContactsController,
   getContactByIdController,
@@ -15,6 +16,8 @@ const {
 } = require("../../controllers/contactsController");
 
 const router = express.Router();
+
+router.use(authMiddleware);
 
 router.get("/", asyncWrapper(getContactsController));
 
