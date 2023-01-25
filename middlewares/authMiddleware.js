@@ -3,9 +3,6 @@ const { NotAuthorizedError } = require("../helpers/errors");
 const { User } = require("../models/userModel");
 
 const authMiddleware = async (req, res, next) => {
-  if (req.method === "POST") {
-    return next();
-  }
   const [, token] = req.headers.authorization.split(" ");
 
   if (!token) {

@@ -23,7 +23,7 @@ const removeContactById = async (contactId, owner) => {
 };
 
 const addContact = async (body, owner) => {
-  const contact = new Contact(...body, owner);
+  const contact = new Contact({ ...body, owner });
   await contact.save();
 };
 

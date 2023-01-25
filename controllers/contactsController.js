@@ -18,7 +18,7 @@ const getContactsController = async (req, res) => {
 };
 const getContactByIdController = async (req, res) => {
   const { contactId } = req.params;
-  const { _id: owner } = req.user;
+  const { id: owner } = req.user;
   const contact = await getContactById(contactId, owner);
   res.json({ contact, status: "success" });
 };

@@ -33,7 +33,7 @@ const login = async (email, password) => {
     process.env.JWT_SECRET
   );
   await User.findByIdAndUpdate(user._id, { $set: { token } });
-  console.log(token);
+
   return { user, token };
 };
 
@@ -42,7 +42,8 @@ const logout = async (userId) => {
 };
 
 const current = async (userId) => {
-  await User.findOne();
+  const { email, subscription } = await User.findOne({ _id: userId });
+  return { email, subscription };
 };
 
 module.exports = {

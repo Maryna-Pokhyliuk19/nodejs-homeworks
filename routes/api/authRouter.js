@@ -11,6 +11,7 @@ const {
   validateRegistration,
   validateLogin,
 } = require("../../middlewares/validation");
+const { authMiddleware } = require("../../middlewares/authMiddleware");
 
 const router = express.Router();
 
@@ -22,8 +23,8 @@ router.post(
 
 router.post("/login", validateLogin, asyncWrapper(loginController));
 
-router.get("/logout", asyncWrapper(logoutController));
+router.get("/logout", authMiddleware, asyncWrapper(logoutController));
 
-router.get("/current", asyncWrapper(currentController));
+router.get("/current", authMiddleware, asyncWrapper(currentController));
 
 module.exports = router;
