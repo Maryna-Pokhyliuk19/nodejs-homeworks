@@ -32,7 +32,7 @@ router.get("/current", authMiddleware, asyncWrapper(currentController));
 
 router.patch(
   "/avatars",
-  uploadMiddleware.single("avatar"),
+  [authMiddleware, uploadMiddleware.single("avatar")],
   asyncWrapper(updateAvatarController)
 );
 

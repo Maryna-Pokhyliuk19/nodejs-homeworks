@@ -6,7 +6,7 @@ const asyncWrapper = (controller) => {
   };
 };
 
-const errorHandler = (error, res, req, next) => {
+const errorHandler = (error, req, res, next) => {
   if (error instanceof NodjsError) {
     return res.status(error.status).json({ message: error.message });
   }

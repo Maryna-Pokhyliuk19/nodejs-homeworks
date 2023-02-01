@@ -1,5 +1,5 @@
-const Jimp = require("jimp");
 const fs = require("fs").promises;
+const Jimp = require("jimp");
 
 const resizeAvatar = async (path) => {
   const avatar = await Jimp.read(path);

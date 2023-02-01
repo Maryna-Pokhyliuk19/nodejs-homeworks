@@ -54,7 +54,7 @@ const updateAvatarController = async (req, res, next) => {
   req.body.avatarURL = gravatar.url(req.body.email);
   await updateAvatar(_id, req.body.avatarURL);
   try {
-    await copyAvatar(req.file, req.body);
+    await copyAvatar(req.file, req.body.avatarURL);
   } catch (error) {
     await fs.unlink(path);
     return next(error);
