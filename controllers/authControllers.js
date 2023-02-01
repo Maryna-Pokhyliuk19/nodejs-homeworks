@@ -1,15 +1,28 @@
+const gravatar = require("gravatar");
+const { copyAvatar } = require("../helpers/copyAvatar");
+const fs = require("fs").promises;
+
 const {
   registration,
   login,
   logout,
   current,
+  updateAvatar,
 } = require("../services/authService");
 
-const registrationController = async (req, res) => {
-  const { email, password } = req.body;
+const registrationController = async (req, res, next) => {
+  const { path } = req.file;
 
-  const user = await registration(email, password);
-  res.json({ user: { email: user.email, subscription: user.subscription } });
+  req.body.avatarURL = gravatar.url(req.body.email);
+  const { email, subscription } = await registration(req.body);
+
+  try {
+    await copyAvatar(req.file, req.body.avatarURL);
+  } catch (error) {
+    await fs.unlink(path);
+    return next(error);
+  }
+  res.status(201).json({ user: { email, subscription } });
 };
 
 const loginController = async (req, res) => {
@@ -35,9 +48,24 @@ const currentController = async (req, res) => {
   res.json(user);
 };
 
+const updateAvatarController = async (req, res, next) => {
+  const { _id } = req.user;
+  const { path } = req.file;
+  req.body.avatarURL = gravatar.url(req.body.email);
+  await updateAvatar(_id, req.body.avatarURL);
+  try {
+    await copyAvatar(req.file, req.body);
+  } catch (error) {
+    await fs.unlink(path);
+    return next(error);
+  }
+  res.json({ avatarURL: req.body.avatarURL });
+};
+
 module.exports = {
   registrationController,
   loginController,
   logoutController,
   currentController,
+  updateAvatarController,
 };
