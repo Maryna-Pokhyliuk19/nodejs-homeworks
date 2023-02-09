@@ -8,10 +8,11 @@ const {
   logout,
   current,
   updateAvatar,
+  veryfiUser,
 } = require("../services/authService");
 
 const registrationController = async (req, res, next) => {
-  const { path } = req.file;
+  // const { path } = req.file;
 
   req.body.avatarURL = gravatar.url(req.body.email);
   const { email, subscription } = await registration(req.body);
@@ -19,7 +20,7 @@ const registrationController = async (req, res, next) => {
   try {
     await copyAvatar(req.file, req.body.avatarURL);
   } catch (error) {
-    await fs.unlink(path);
+    // await fs.unlink(path);
     return next(error);
   }
   res.status(201).json({ user: { email, subscription } });
@@ -62,10 +63,17 @@ const updateAvatarController = async (req, res, next) => {
   res.json({ avatarURL: req.body.avatarURL });
 };
 
+const verificationController = async (req, res) => {
+  const { verificationToken } = req.params;
+  await veryfiUser(verificationToken);
+  res.status(200).json({ status: "Verification successful" });
+};
+
 module.exports = {
   registrationController,
   loginController,
   logoutController,
   currentController,
   updateAvatarController,
+  verificationController,
 };
