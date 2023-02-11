@@ -9,10 +9,11 @@ const {
   current,
   updateAvatar,
   veryfiUser,
+  repeatVerify,
 } = require("../services/authService");
 
 const registrationController = async (req, res, next) => {
-  // const { path } = req.file;
+  const { path } = req.file;
 
   req.body.avatarURL = gravatar.url(req.body.email);
   const { email, subscription } = await registration(req.body);
@@ -20,8 +21,8 @@ const registrationController = async (req, res, next) => {
   try {
     await copyAvatar(req.file, req.body.avatarURL);
   } catch (error) {
-    // await fs.unlink(path);
-    return next(error);
+    await fs.unlink(path);
+    next(error);
   }
   res.status(201).json({ user: { email, subscription } });
 };
@@ -66,9 +67,13 @@ const updateAvatarController = async (req, res, next) => {
 const verificationController = async (req, res) => {
   const { verificationToken } = req.params;
   await veryfiUser(verificationToken);
-  res.status(200).json({ status: "Verification successful" });
+  res.json({ message: "Verification successful" });
 };
 
+const repeatVerifyController = async (req, res) => {
+  await repeatVerify(req.body.email);
+  res.json({ message: "Verification email sent" });
+};
 module.exports = {
   registrationController,
   loginController,
@@ -76,4 +81,5 @@ module.exports = {
   currentController,
   updateAvatarController,
   verificationController,
+  repeatVerifyController,
 };

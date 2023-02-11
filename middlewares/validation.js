@@ -13,6 +13,9 @@ const {
   registrationSchema,
 } = require("../helpers/authValidation/registrationSchema");
 const { loginSchema } = require("../helpers/authValidation/loginSchema");
+const {
+  repeatVerifySchema,
+} = require("../helpers/authValidation/repeatVerifySchema");
 
 const validateAddContact = (req, res, next) => {
   const result = addContactSchema.validate(req.body);
@@ -55,10 +58,19 @@ const validateLogin = (req, res, next) => {
   next();
 };
 
+const repeatVerifyValidate = (req, res, next) => {
+  const validationResult = repeatVerifySchema.validate(req.body);
+  if (validationResult.error) {
+    next(new ValidationError(400, "missing required field email"));
+  }
+  next();
+};
+
 module.exports = {
   validateAddContact,
   validateUpdateContact,
   validateUpdateFavoriteContact,
   validateRegistration,
   validateLogin,
+  repeatVerifyValidate,
 };

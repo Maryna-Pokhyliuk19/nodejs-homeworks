@@ -18,7 +18,7 @@ const authMiddleware = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    next(new NotAuthorizedError("Invalid token"));
+    return next(new NotAuthorizedError("Invalid token"));
   }
 };
 module.exports = {

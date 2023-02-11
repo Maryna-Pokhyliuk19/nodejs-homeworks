@@ -12,22 +12,18 @@ const registration = async (body) => {
   if (checkEmail) {
     throw new Conflict("Email in use");
   }
-  console.log(email);
 
   const verificationToken = sha256(body.email + process.env.JWT_SECRET);
+  body.verificationToken = verificationToken;
   console.log(verificationToken);
-  const user = new User({
-    body,
+  const user = new User(body);
+
+  sendMail({
     verificationToken,
-  });
-  await user.save();
-  await sendMail({
     to: email,
-    subject: "Please confirm your email",
-    html: `<a href="http://localhost:3000/users/verify/${verificationToken}">Confirm your email</a>`,
   });
 
-  return user;
+  return await user.save();
 };
 
 const login = async (email, password) => {
@@ -73,12 +69,27 @@ const veryfiUser = async (verificationToken) => {
   const user = await User.findOne({ verificationToken, verify: false });
 
   if (!user) {
-    res.status(400).json({ message: `User not found` });
-    return;
+    throw new WrongParametersError(`User not found`);
   }
   user.verificationToken = "null";
   user.verify = true;
   await user.save();
+};
+
+const repeatVerify = async (email) => {
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new WrongParametersError(`User not found`);
+  }
+  if (user.verify) {
+    throw new NodjsError(`Verification has already been passed`);
+  }
+
+  sendMail({
+    to: user.email,
+    verificationToken: user.verificationToken,
+  });
 };
 
 module.exports = {
@@ -88,4 +99,5 @@ module.exports = {
   current,
   updateAvatar,
   veryfiUser,
+  repeatVerify,
 };

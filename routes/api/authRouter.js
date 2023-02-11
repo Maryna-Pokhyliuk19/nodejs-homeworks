@@ -7,10 +7,12 @@ const {
   logoutController,
   updateAvatarController,
   verificationController,
+  repeatVerifyController,
 } = require("../../controllers/authControllers");
 const {
   validateRegistration,
   validateLogin,
+  repeatVerifyValidate,
 } = require("../../middlewares/validation");
 const { authMiddleware } = require("../../middlewares/authMiddleware");
 const { asyncWrapper } = require("../../helpers/apiHelpers");
@@ -38,5 +40,10 @@ router.patch(
 );
 
 router.get("/verify/:verificationToken", asyncWrapper(verificationController));
+router.post(
+  "/verify",
+  repeatVerifyValidate,
+  asyncWrapper(repeatVerifyController)
+);
 
 module.exports = router;
